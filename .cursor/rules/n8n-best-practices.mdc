@@ -1,0 +1,34 @@
+---
+description: Team n8n standards — naming, error workflow, reusable sub-workflows
+alwaysApply: true
+---
+
+# n8n best practices (blocking)
+
+Full detail: [docs/best-practices.md](../../docs/best-practices.md).
+
+## Naming
+
+- Workflow and node names: **short, plain English** — readable as a story.
+- Bad: `If`, `Set`, `HTTP Request`. Good: `Does user have email?`, `Fetch user profile from directory`.
+- Workflow `name` is descriptive English; repo file stays `workflows/<kebab-slug>.json`.
+
+## Error handling (every workflow)
+
+**Preferred:** `settings.errorWorkflow` → dedicated global error-handling workflow (document name/id in ARCHITECTURE).
+
+**Exceptional:** local Error Trigger only with justification in ARCHITECTURE. Do not ship workflows with neither.
+
+## Reusable sub-workflows
+
+Use to **decompose** complexity or **share** logic (e.g. email → user profile with Slack/Jira ids).
+
+Reusable workflows require: **strict inputs/outputs**, **limited scope**, documented in specs. Treat as high-impact: limited write access in n8n; everyone can view.
+
+Orchestrators call reusables via **Execute Workflow**; document parent/child links in ARCHITECTURE.
+
+## Skills must enforce
+
+- **n8n-plan** — workflow kind, error workflow, sub-workflow I/O, story node names in ARCHITECTURE.
+- **n8n-build** — implement error workflow setting or justified local trigger; name nodes per story rule.
+- **n8n-verify** — `[REJECT]` on generic names, missing error handling, or undocumented sub-workflow contracts.
