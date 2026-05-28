@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+*.cred.json
+credentials/
+node_modules/
+.DS_Store
+
+
+REMINDERS.md
