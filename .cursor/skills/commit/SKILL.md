@@ -2,13 +2,16 @@
 name: commit
 description: >-
   Split staged and unstaged changes into logical, dependency-ordered commits
-  grouped by harness phase (harness, specs, workflow JSON, deploy). Use when the
-  user says /commit, "commit these changes", or "separate into commits".
+  grouped by harness phase (harness, specs, workflow JSON, deploy). Never add
+  Cursor co-author trailers. Use when the user says /commit, "commit these
+  changes", or "separate into commits".
 ---
 
 # Commit
 
 Split all pending changes into logical, dependency-ordered commits with short messages. Follow the user's git safety rules: never commit secrets, never amend unless explicitly allowed, never update git config.
+
+**Never co-author with Cursor** — commits must attribute only the human author. Do not add `Co-authored-by` trailers (especially `Co-authored-by: Cursor <cursoragent@cursor.com>`). Use plain `git commit -m "message"` only; never `--trailer`, `-t`, or a multi-line message body for co-authors.
 
 ## Workflow
 
@@ -24,7 +27,7 @@ Split all pending changes into logical, dependency-ordered commits with short me
    - Commit with a one-line message (under 60 characters)
 6. Show `git log --oneline -n <count>` for the new commits.
 
-On Windows PowerShell, use `git commit -m "message"` (no HEREDOC required).
+On Windows PowerShell, use `git commit -m "message"` (no HEREDOC required). If a wrapper injects `--trailer` or co-author lines, override with an explicit `-m` only and no trailers.
 
 ## Phase order (n8n-harness)
 
@@ -63,7 +66,9 @@ If the user touched only one or two files, a single `docs: …` commit for the w
 - One line only, no body
 - Conventional prefix: `feat:`, `fix:`, `test:`, `refactor:`, `chore:`, `docs:`
 - Describe **what** changed, not why
-- No co-author lines, no ticket URLs unless the user supplied them in the message style
+- **No Cursor co-authors** — never `Co-authored-by: Cursor` or any Cursor/agent trailer; human author only
+- No other co-author lines unless the user explicitly requests them in chat
+- No ticket URLs unless the user supplied them in the message style
 - Scope with slug when helpful: `feat(onboarding-webhook): add trigger node`
 
 ### Examples (this repo)
