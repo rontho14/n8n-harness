@@ -3,7 +3,8 @@ name: n8n-plan
 description: >-
   Document-driven planning for n8n workflows. Gathers context, creates or updates
   specs/<slug>/ (TRUTH, ARCHITECTURE, INTEGRATION, DESIGN), runs the validation
-  scorecard into VALIDATION.md, and stops for human approval. Does not edit workflow JSON.
+  scorecard into VALIDATION.md, and stops for human approval. Requires MCP node verification
+  (search_nodes, get_node) when available. Does not edit workflow JSON.
   Use only when the user explicitly invokes planning before build or deploy.
 ---
 
@@ -20,9 +21,12 @@ User invokes **`n8n-plan`** or asks to plan/spec a new or changed workflow befor
 ## Inputs to gather
 
 1. User narrative (trigger, systems, success/failure expectations).
-2. `docs/best-practices.md`, `docs/conventions.md`, `docs/validation-rubric.md`, `docs/n8n-cloud-cli.md`, `docs/n8n-workflow-json.md`, `docs/n8n-node-catalog.md`.
-3. Existing `workflows/` and sibling `specs/*/` for patterns and naming collisions.
-4. Optional `docs/` or README constraints.
+2. `docs/best-practices.md`, `docs/conventions.md`, `docs/validation-rubric.md`, `docs/n8n-cloud-cli.md`, `docs/n8n-workflow-json.md`, `docs/n8n-node-catalog.md`, **`docs/exemplos-patterns.md`**, `docs/rd-cloud-patterns.example.md`, `docs/mcp-pipeline.md`.
+3. **RD SharePoint/PDF (required when spec touches SharePoint or PDF):** read `docs/exemplos-patterns.md` (exo-1…exo-5). If present: `Exemplos.json` (repo root, gitignored) and `docs/rd-cloud-patterns.md`. Else: node catalog + `n8n-expression-syntax` EXAMPLES ex16–ex23.
+4. **Do not plan** external HTTP APIs to **read** PDF text — use **Extract from File** `pdf` (exo-4). External HTTP is only for **HTML→PDF generation** (exo-5), URL in INTEGRATION.md.
+5. Existing `workflows/` and sibling `specs/*/` for patterns and naming collisions.
+6. Optional `docs/` or README constraints.
+7. **MCP (required):** read `.cursor/skills/n8n-mcp-local/SKILL.md` before any MCP call; run `tools_documentation` at session start to confirm server alive.
 
 If slug is unknown, propose a kebab-case `<slug>` and confirm once.
 
@@ -40,7 +44,7 @@ Copy section headings from `specs/_templates/` when creating new files.
 |------|---------|
 | `TRUTH.md` | Business only: stories, Given/When/Then, scope, non-goals, ops expectations |
 | `ARCHITECTURE.md` | Workflow kind (`orchestrator` \| `reusable`), trigger, mermaid graph, **story-style** node table, **global error workflow** (or justified local), sub-workflow I/O, retries |
-| `INTEGRATION.md` | Per external system: URLs (dev/prod), auth **names**, methods, bodies, rate limits, idempotency, human credential steps |
+| `INTEGRATION.md` | **n8n Cloud instance** (single org instance), instance variable **names**, per external system: URLs, auth **names**, methods, bodies, rate limits, idempotency, human credential steps |
 | `DESIGN.md` | Only if messaging/UI copy matters (Slack blocks, email subject, etc.) |
 | `VALIDATION.md` | Open items from rubric + empty approval block |
 | `TASKS.md` | Optional skeleton only — full task list may wait until post-approval build prep |
@@ -70,6 +74,17 @@ Ask once and record in `ARCHITECTURE.md` → **Go live on deploy**:
 | `manual` | User will always decide at deploy time |
 
 For **workflow kind: reusable**, default recommendation is **`no`** — see [REMINDERS.md](../../../REMINDERS.md) P1.3 (not enforced in deploy skill yet).
+
+### 2d. MCP node verification (required)
+
+After drafting the ARCHITECTURE node table (story names + planned responsibilities):
+
+1. For each **distinct node family** in the graph, call `search_nodes` then `get_node` (default/essentials detail).
+2. Record verified **`nodeType`** in ARCHITECTURE (e.g. `nodes-base.slack`) in the **Type (verified)** column — not guessed from memory.
+3. Optional: `search_templates` / `get_template` when the pattern is unclear; note template id in ARCHITECTURE or `VALIDATION.md`.
+4. If MCP fails, follow [docs/mcp-pipeline.md](../../../docs/mcp-pipeline.md) **MCP unavailable protocol** — stop planning; add open item to `VALIDATION.md`; do not mark types as verified.
+
+MCP does **not** replace the validation scorecard or human approval.
 
 ### 3. Run validation scorecard
 

@@ -27,6 +27,8 @@ Read [STRUCTURE.md](../../STRUCTURE.md) for the full pipeline.
 - **Build loop** — `n8n-build` implements one `TASKS.md` item per iteration, runs **n8n-verify** inline, then continues to the next task without a separate user invoke (unless user asked for a single task or verify returned `[REJECT]`).
 - **No subagents** for this pipeline.
 - **Verify output** — `n8n-verify` must emit exactly `[APPROVE]` or `[REJECT]` with numbered findings.
+- **Local MCP is required** in plan, refine, build, and verify when available — read `n8n-mcp-local` and `docs/mcp-pipeline.md` before MCP tools; follow unavailable protocol if MCP is down. Do **not** skip `VALIDATION.md` approval or `n8n-verify` because MCP validated something.
+- **No MCP-only deploy** — never create, update, delete, or activate remote workflows via MCP alone; use `n8n-deploy` + explicit user confirmation (`n8n-cli`). Remote `n8n_*` MCP tools stay disabled in `.cursor/mcp.json` unless the user deliberately reconfigures for an internal instance.
 
 ## Repository layout
 
@@ -37,14 +39,23 @@ Read [STRUCTURE.md](../../STRUCTURE.md) for the full pipeline.
 | `workflows/<slug>.json` | Your workflow JSON (harness build only — no examples here) |
 | `docs/n8n-workflow-json.md` | Workflow JSON shape and connections |
 | `docs/n8n-node-catalog.md` | Curated node types and parameters |
+| `docs/exemplos-patterns.md` | RD SharePoint/PDF patterns (exo-1…exo-5); read before plan/refine when in scope |
+| `Exemplos.json` (root, gitignored) | Optional n8n export backing exemplos-patterns |
 | `docs/n8n-cloud-cli.md` | Full `n8n-cli` command reference (Cloud) |
 | `docs/best-practices.md` | Naming, error workflow, reusable sub-workflows |
 | `docs/conventions.md` | Repo paths and JSON shape |
 | `REMINDERS.md` | Deferred decisions (P0.2, P1.3, P2.2) |
 | `docs/validation-rubric.md` | Build-ready scorecard |
 | `docs/invoke-cheatsheet.md` | Which command when |
+| `docs/mcp-local.md` | Local MCP install, build, env, disabled tools |
+| `docs/mcp-pipeline.md` | Required MCP calls per pipeline phase |
 | `scripts/validate-workflow.mjs` | JSON + structure validation |
 | `deployments/DEPLOYMENTS.md` | Append-only deployment log |
+| `mcp/` | Vendored local MCP server (stdio) |
+| `plan/` | MCP fork phases (maintainer-local, gitignored) |
+| `.cursor/mcp.json` | Cursor MCP config |
+
+**Local MCP:** required in pipeline when available — see [n8n-mcp.mdc](n8n-mcp.mdc), `n8n-mcp-local`, and `docs/mcp-pipeline.md`.
 
 ## Deploy (user-owned)
 
