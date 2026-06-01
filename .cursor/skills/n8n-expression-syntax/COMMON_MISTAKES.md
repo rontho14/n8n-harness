@@ -33,6 +33,12 @@ See [EXAMPLES.md](EXAMPLES.md) for correct patterns.
 | path-not-in-spec | ad-hoc `$json` path | document in INTEGRATION.md |
 | branch-not-run | `$node["unused branch"]` | merge graph or `??` default |
 | sp-folder-resource | `"resource": "folder"` on `microsoftSharePoint` | **Item** `getAll` + Filter; **File** only for download/upload — see `docs/n8n-node-catalog.md` |
+| sp-weburl-plain-text | `rightValue`: `02 - Documentos Base` on `webUrl` contains | encoded: `02%20-%20Documentos%20Base` — see EXAMPLES ex16 |
+| sp-etag-path | `$json['@odata'].etag` or wrong key | `$json['@odata.etag']` + `.replace(/\"/g,'').split(',')[0]` — ex17 |
+| loop-node-name | `$('Loop Over Items')` name mismatch | must equal exact `nodes[].name` / ARCHITECTURE — ex18 |
+| pdf-read-http-api | HTTP/API “read PDF” / OCR / document intelligence for text | **Extract from File** `pdf` after download — ex20, [exemplos-patterns.md](../../../docs/exemplos-patterns.md) exo-4 |
+| pdf-read-llm-default | Information Extractor / LLM as default for fixed template fields | Code parse on extracted text; LLM only if spec requires |
+| pdf-gen-without-html | HTTP PDF API fed raw JSON without HTML step | Code → **Convert to File** `html` → HTTP multipart — ex21, exo-5 |
 
 ## 1 missing-braces
 

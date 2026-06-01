@@ -34,9 +34,13 @@ flowchart LR
 
 Use **story-style** plain English names (see `docs/best-practices.md`).
 
-| Node name | Type (for build) | Responsibility |
-|-----------|------------------|----------------|
-| Does user have email? | IF | … |
+| Node name | Type (verified) | Responsibility |
+|-----------|-----------------|----------------|
+| Does user have email? | nodes-base.if | … |
+
+<!-- Type (verified) = MCP nodeType from n8n-plan step 2d (search_nodes → get_node). Do not guess. -->
+
+<!-- SharePoint/PDF: cite docs/exemplos-patterns.md pattern IDs (exo-1…exo-5). PDF read = extractFromFile pdf, not HTTP read API. -->
 
 ## Data flow
 

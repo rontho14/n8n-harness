@@ -122,6 +122,103 @@ URL: `https://api.example.com/customers/{{$json.customerId}}` or `={{$node["Norm
 }
 ```
 
+## ex16 SharePoint webUrl folder filter
+
+Flow: `List documents from library` → `Keep only base-folder PDFs?`
+
+`webUrl` is URL-encoded. UI folder **02 - Documentos Base** → If **contains** literal:
+
+```
+02%20-%20Documentos%20Base
+```
+
+JSON:
+
+```json
+{
+  "leftValue": "={{ $json.webUrl }}",
+  "rightValue": "02%20-%20Documentos%20Base",
+  "operator": { "type": "string", "operation": "contains" }
+}
+```
+
+Also filter `contentType.name` equals `Document`. Picker `cachedResultName` stays human-readable; do not use spaces in `rightValue` for `webUrl` contains.
+
+## ex17 SharePoint file id from @odata.etag
+
+After Item Get All (`simplify: false`), File download `mode: id`:
+
+```
+={{ $json['@odata.etag'].replace(/\"/g, '').split(',')[0] }}
+```
+
+Etag shape `"<guid>,1"` → use GUID only.
+
+## ex18 loop upload fileName from webUrl
+
+Flow: `Loop over base documents` (splitInBatches) → `Upload final PDF to personal folder`
+
+```
+={{ decodeURIComponent($('Loop over base documents').item.json.webUrl.split('/').pop()) }}
+```
+
+`$('Loop over base documents')` must match `nodes[].name` exactly (story name in harness).
+
+## ex20 Extract PDF text after SharePoint download (exo-4)
+
+Flow: `Download current base PDF` → `Extract text from base PDF`
+
+Built-in only — **no** external PDF read API. Source: `Exemplos.json` / [docs/exemplos-patterns.md](../../../docs/exemplos-patterns.md).
+
+```json
+{
+  "type": "n8n-nodes-base.extractFromFile",
+  "typeVersion": 1.1,
+  "parameters": { "operation": "pdf", "options": {} }
+}
+```
+
+Wire SharePoint File download `main` → Extract from File. Parsed fields: follow with Code node (deterministic regex), not a separate document API.
+
+## ex21 Generate PDF from HTML (exo-5)
+
+Flow: `Merge data into report HTML` (Code) → `Build HTML file for PDF` → `Convert HTML to PDF`
+
+```json
+{ "operation": "html" }
+```
+
+HTTP Request POST `multipart-form-data`, `formBinaryData` on binary `data` — URL and field names in INTEGRATION.md only. **Generation** API is allowed; **read** API is not (use ex20).
+
+## ex22 Download template from SharePoint (exo-3)
+
+Static File download — site `AcelerAI_06_2026`, folder `03 - Template`, file `template_licenciamento.pdf`. Copy node from `Exemplos.json`; re-pick GUIDs in UI on other tenants.
+
+## ex23 SharePoint list + If filter (exo-1, matches Exemplos export)
+
+Same as ex16–ex19 but documents the **If** node variant used in `Exemplos.json` (equivalent to Filter node in specs):
+
+`Get many items` → `Filtrar arquivos` (If, and) → `Loop Over Items` → `Download Doc`.
+
+## ex19 If node conditions in workflow JSON
+
+Combine with `combinator: "and"`:
+
+```json
+"conditions": [
+  {
+    "leftValue": "={{ $json.contentType.name }}",
+    "rightValue": "Document",
+    "operator": { "type": "string", "operation": "equals" }
+  },
+  {
+    "leftValue": "={{ $json.webUrl }}",
+    "rightValue": "02%20-%20Documentos%20Base",
+    "operator": { "type": "string", "operation": "contains" }
+  }
+]
+```
+
 ## ex15 weather chain (template #2947)
 
 `Receive weather slash command` → `Resolve city to coordinates` → `Fetch forecast from weather API` → `Post weather summary to Slack`
@@ -141,6 +238,11 @@ Slack: {{$node["Fetch forecast from weather API"].json.properties.temperature.va
 | now | `{{$now.toFormat('yyyy-MM-dd')}}` |
 | array | `{{$json.arr[0].x}}` |
 | default | `{{$json.x \|\| 'n/a'}}` |
+| SharePoint folder in webUrl | encoded segment e.g. `02%20-%20Documentos%20Base` |
+| loop item from other node | `$('Exact Node Name').item.json.path` |
+| decode filename from webUrl | `decodeURIComponent(...split('/').pop())` |
+| PDF text extraction | Extract from File `pdf` after download — ex20; not HTTP read API |
+| PDF generation | Convert to File `html` + HTTP multipart — ex21 |
 
 ## pre-verify
 

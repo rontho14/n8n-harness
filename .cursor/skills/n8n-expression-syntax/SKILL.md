@@ -10,7 +10,7 @@ description: >-
 
 Target: `workflows/<slug>.json`. Use in **n8n-build**, **n8n-verify**, **n8n-pull** review.
 
-Refs: [COMMON_MISTAKES.md](COMMON_MISTAKES.md) | [EXAMPLES.md](EXAMPLES.md)
+Refs: [COMMON_MISTAKES.md](COMMON_MISTAKES.md) | [EXAMPLES.md](EXAMPLES.md) | extended: [COMMON_MISTAKES_FULL.md](COMMON_MISTAKES_FULL.md) | [EXAMPLES_FULL.md](EXAMPLES_FULL.md)
 
 ## Syntax
 
@@ -70,8 +70,11 @@ Shape: `{headers, params, query, body:{...}}`. Document paths in INTEGRATION.md.
 - array: `[i]`, `.length`, `.map()`, `.join()`
 - cond: `{{$json.x ? 'a' : 'b'}}`, `{{$json.x \|\| 'default'}}`
 - date: `{{$now.toFormat(...)}}`, `.plus()`, `.minus()`
+- SharePoint/PDF: read **`docs/exemplos-patterns.md`** (exo-1…exo-5) before planning or wiring. SharePoint URLs: encoded segment in If/Filter `rightValue`; loop `$('…')` and etag — EXAMPLES ex16–ex23; `docs/n8n-node-catalog.md`. PDF **read** = Extract from File `pdf` (ex20), not HTTP. PDF **generate** = Convert to File `html` + HTTP (ex21).
+- loop context: `$('Exact Node Name').item.json` (not `$node`) — name must match `nodes[].name`
 
 ## Links
 
 - n8n-build, n8n-verify, n8n-plan/refinar-specs
 - docs/n8n-workflow-json.md, docs/n8n-node-catalog.md, docs/best-practices.md
+- Optional local: `docs/rd-cloud-patterns.md` (gitignored); template `docs/rd-cloud-patterns.example.md`

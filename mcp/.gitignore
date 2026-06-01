@@ -1,0 +1,68 @@
+# mcp/ package — paths relative to this directory
+# Repo-wide MCP ignores: ../.gitignore (mcp/dist/, SQLite sidecars, etc.)
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment (see also root .gitignore)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Logs
+logs/
+*.log
+mcp-server-*.log
+server.log
+server-fixed.log
+mcp-debug.log
+
+# TypeScript cache
+.tsc-cache/
+
+# Batch exports (may contain tokens from templates)
+docs/batch_*.jsonl
+**/batch_*_error.jsonl
+
+# Database — commit nodes.db; ignore journals and backups
+data/*.db-journal
+data/*.db-shm
+data/*.db-wal
+data/*.db.bak
+data/*.db.backup
+!data/.gitkeep
+!data/nodes.db
+
+# Personal / local tooling (not for harness git)
+claude_desktop_config.json
+claude_desktop_config_*.json
+!claude_desktop_config.example.json
+mcp-server-v20.sh
+rebuild-v20.sh
+!mcp-server-v20.example.sh
+n8n-docs/
+npm-publish-temp/
+test-npx/
+n8n-mcp-wrapper.sh
+n8n-harness-mcp-wrapper.sh
+*.tgz
+.mcp.json*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Thumbs.db
+
+# Temp
+temp/
+tmp/

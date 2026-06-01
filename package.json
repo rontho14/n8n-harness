@@ -1,0 +1,8 @@
+{
+  "name": "n8n-harness",
+  "private": true,
+  "scripts": {
+    "mcp:install": "npm ci --prefix mcp",
+    "mcp:build": "npm run build --prefix mcp"
+  }
+}

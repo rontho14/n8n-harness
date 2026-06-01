@@ -6,8 +6,25 @@ credentials/
 node_modules/
 .DS_Store
 
+# mcp/ vendored server
+# Commit: mcp/package.json, mcp/package-lock.json, mcp/data/nodes.db (see mcp/.gitignore)
+# Ignore: mcp/dist/, mcp/node_modules/ (global node_modules/ below), SQLite sidecars
+mcp/dist/
+mcp/coverage/
+mcp/**/*.tsbuildinfo
+mcp/data/*.db-shm
+mcp/data/*.db-wal
+mcp/data/*.db-journal
+mcp/data/*.db.bak
+mcp/data/*.db.backup
 
 REMINDERS.md
 
 /*.json
+!package.json
 plan/
+
+# Local n8n Cloud reference (not for git) — agents read docs/exemplos-patterns.md (committed) first
+Exemplos.json
+docs/rd-cloud-patterns.md
+workflows/

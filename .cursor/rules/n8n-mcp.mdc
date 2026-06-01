@@ -1,0 +1,23 @@
+---
+description: Vendored n8n MCP — required in plan/build/verify when available; specs and n8n-verify remain authoritative
+globs:
+  - mcp/**
+  - workflows/**
+  - specs/**
+---
+
+# Local n8n MCP
+
+Read [`.cursor/skills/n8n-mcp-local/SKILL.md`](../skills/n8n-mcp-local/SKILL.md) before calling MCP tools. Pipeline phases: [`docs/mcp-pipeline.md`](../../docs/mcp-pipeline.md).
+
+## Rules
+
+- MCP is **required** during `n8n-plan`, `refinar-specs` (node changes), `n8n-build`, and `n8n-verify` when the server is available — see phase table in `docs/mcp-pipeline.md`.
+- MCP does **not** replace `VALIDATION.md`, `n8n-verify` spec checks, or `n8n-validate-json`.
+- **Never deploy** workflows via MCP alone; use `n8n-deploy` and explicit user confirmation.
+- **No secrets** in MCP tool arguments or committed JSON.
+- If MCP is unavailable, **stop** and follow the unavailable protocol in `docs/mcp-pipeline.md` — do not skip MCP silently.
+- After edits under `mcp/`, ask the user to **reload MCP in Cursor** before testing tools.
+- Editing `mcp/` source: use [`n8n-mcp-maintain`](../skills/n8n-mcp-maintain/SKILL.md).
+
+Import log: [docs/mcp-cursor-import.md](../../docs/mcp-cursor-import.md).

@@ -12,10 +12,11 @@ Planning gate before **`n8n-build`**.
 - [ ] Node names are story-style plain English (ARCHITECTURE table)
 - [ ] Input/output examples present
 - [ ] Credential names and human setup steps
-- [ ] dev vs prod base URLs (no prod secrets in git)
+- [ ] n8n Cloud instance + external API URLs documented (no secrets in git)
 - [ ] Acceptance table maps to manual tests
 - [ ] Non-goals listed
 - [ ] Reusable governance noted (if workflow kind = reusable)
+- [ ] MCP session verified during plan (ARCHITECTURE types from `get_node`, not guessed)
 
 ## Approval
 

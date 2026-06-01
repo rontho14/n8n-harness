@@ -18,6 +18,7 @@ Strict reviewer for workflow JSON against on-disk specs. Read-only toward n8n re
 - Often invoked **inline by n8n-build** after each task — same checklist; user does not need a separate chat turn.
 - Read `specs/<slug>/` specs and `workflows/<slug>.json`.
 - For JSON/port semantics: `docs/n8n-workflow-json.md`, `docs/n8n-node-catalog.md`.
+- **MCP (required):** read `.cursor/skills/n8n-mcp-local/SKILL.md` and `docs/mcp-pipeline.md` before `validate_workflow`.
 
 ## Checks
 
@@ -30,7 +31,8 @@ Strict reviewer for workflow JSON against on-disk specs. Read-only toward n8n re
 7. **Secrets** — no literal tokens/keys/passwords; credential refs by name/id only.
 8. **Acceptance** — map TRUTH Given/When/Then rows to **Manual test steps** (numbered); flag gaps.
 9. **DESIGN** — if present, message copy matches DESIGN (labels only; no deploy test).
-10. **Expressions** — `[REJECT]` on obvious syntax issues: missing `{{ }}` in dynamic fields, webhook fields at `$json` root instead of `.body` when INTEGRATION documents webhook body, `$node["..."]` names that do not match workflow JSON, or `{{ }}` inside Code node `jsCode`. See `.cursor/skills/n8n-expression-syntax/COMMON_MISTAKES.md`.
+10. **Expressions** — `[REJECT]` on obvious syntax issues: missing `{{ }}` in dynamic fields, webhook fields at `$json` root instead of `.body` when INTEGRATION documents webhook body, `$node["..."]` names that do not match workflow JSON, or `{{ }}` inside Code node `jsCode`. SharePoint: `[REJECT]` if If/Filter uses plain-text folder name in `webUrl` **contains** when INTEGRATION documents a display name with spaces (must use URL-encoded segment per EXAMPLES ex16). PDF: `[REJECT]` if workflow uses HTTP/API to **read** PDF text when ARCHITECTURE/INTEGRATION specify **Extract from File** `pdf` ([exemplos-patterns.md](../../../docs/exemplos-patterns.md) exo-4). See `COMMON_MISTAKES.md` (`sp-weburl-plain-text`, `sp-etag-path`, `loop-node-name`, `pdf-read-http-api`).
+11. **MCP validation** — run `validate_workflow` on `workflows/<slug>.json` (profile `runtime` or `strict` per `.cursor/skills/n8n-mcp-local/VALIDATION_GUIDE.md`). Map MCP **errors** to numbered findings; `[REJECT]` if structural/config errors remain unfixed. MCP **warnings** → numbered findings; may still `[APPROVE]` if specs pass and warnings are acceptable. If MCP unavailable, **stop** per `docs/mcp-pipeline.md` — do not emit `[APPROVE]`. When **n8n-build** already ran `validate_workflow` this iteration, reuse those results if still current; otherwise call again.
 
 ### Optional Cloud checks (read-only, when user may deploy soon)
 
@@ -89,7 +91,8 @@ When **`n8n-build`** runs autonomously, judge **only the current task’s** succ
 
 - Fixing JSON in this skill ( **`n8n-build`** fixes after `[REJECT]`).
 - Deploying or activating workflows.
-- `[APPROVE]` with outstanding spec contradictions or failing validate script.
+- `[APPROVE]` with outstanding spec contradictions, failing validate script, or blocked MCP.
+- Skipping required `validate_workflow` because MCP ran earlier in the same turn without recording results.
 
 ## Subagents
 
