@@ -25,8 +25,8 @@ See [STRUCTURE.md](STRUCTURE.md) for the pipeline diagram.
 ```
 specs/<slug>/           # TRUTH, ARCHITECTURE, INTEGRATION, …
 specs/_templates/       # Section templates → copy into specs/<slug>/
-workflows/<slug>.json   # Canonical workflow JSON
-docs/                   # n8n-cloud-cli, best-practices, conventions, rubric
+workflows/<slug>.json   # Your workflow JSON only (harness build output)
+docs/                   # n8n-workflow-json, node-catalog, CLI, best-practices, …
 deployments/            # DEPLOYMENTS.md (deploy log)
 scripts/                # validate-workflow.mjs
 .cursor/skills/         # n8n-plan, n8n-build, n8n-verify, n8n-deploy, …
@@ -78,14 +78,17 @@ n8n-cli workflow list
 | `n8n-cli` | Runtime CLI (full commands in [docs/n8n-cloud-cli.md](docs/n8n-cloud-cli.md)) |
 | `commit` | Phase-ordered multi-commit split |
 
-## Example
+## Technical reference
 
+- **[docs/n8n-workflow-json.md](docs/n8n-workflow-json.md)** — export shape, connections, LangChain ports
+- **[docs/n8n-node-catalog.md](docs/n8n-node-catalog.md)** — node types used in this org
 - **Spec templates:** `specs/_templates/`
-- **JSON sample:** `workflows/_example-manual-trigger.json`
 
 ```bash
-node scripts/validate-workflow.mjs workflows/_example-manual-trigger.json
+node scripts/validate-workflow.mjs workflows/<your-slug>.json
 ```
+
+Optional reference exports from n8n UI may live **outside** `workflows/` (not canonical until you build into `workflows/<slug>.json`).
 
 ## Safety
 
