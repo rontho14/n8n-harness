@@ -1,6 +1,6 @@
 # n8n workflow conventions (this repo)
 
-Repo layout and JSON mechanics. **n8n Cloud** remote ops: **[n8n-cloud-cli.md](n8n-cloud-cli.md)**. Team standards: **[best-practices.md](best-practices.md)**. Deferred: **[REMINDERS.md](../REMINDERS.md)**.
+Repo layout and JSON mechanics. **n8n Cloud** remote ops: **[n8n-cloud-cli.md](n8n-cloud-cli.md)**. Team standards: **[best-practices.md](best-practices.md)**. JSON reference: **[n8n-workflow-json.md](n8n-workflow-json.md)**, node catalog: **[n8n-node-catalog.md](n8n-node-catalog.md)**. Deferred: **[REMINDERS.md](../REMINDERS.md)**.
 
 ## File naming
 
@@ -9,14 +9,21 @@ Repo layout and JSON mechanics. **n8n Cloud** remote ops: **[n8n-cloud-cli.md](n
 | Spec folder | `specs/<kebab-slug>/` | `specs/resolve-user-by-email/` |
 | Workflow JSON | `workflows/<kebab-slug>.json` | `workflows/resolve-user-by-email.json` |
 | Workflow `name` field | Short plain English (see best practices) | `Resolve user profile by email` |
+| Reference export (optional) | Outside `workflows/` (e.g. repo root) | UI export for adopt/study — not canonical until built into `workflows/` |
 
 `<slug>` must be identical across spec folder and workflow file.
+
+### `workflows/` directory
+
+**User-owned only.** Put JSON here for workflows you create and maintain through the harness (`n8n-build`). Do not store harness templates, examples, or reference exports in `workflows/`.
 
 ## Node naming
 
 Follow the **story rule** in [best-practices.md](best-practices.md): names should read as plain English (e.g. `Does user have email?`, not `If`).
 
 ## JSON shape
+
+See **[n8n-workflow-json.md](n8n-workflow-json.md)** for top-level keys, connection ports (`main`, `ai_*`), credentials, and LangChain wiring.
 
 - 2-space indent; stable key order: `name`, `nodes`, `connections`, `settings`, then optional keys.
 - Run `node scripts/validate-workflow.mjs --fix workflows/<slug>.json` before commit.

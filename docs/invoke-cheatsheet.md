@@ -9,11 +9,13 @@ Ask in chat using the skill name (e.g. “use **n8n-plan** to …”) or `@` the
 | Start a new workflow from an idea | **n8n-plan** | Narrative or ticket text |
 | Clarify ambiguous requirements | **refinar-specs** | `specs/<slug>/` exists |
 | Approve specs for implementation | *(you)* edit **VALIDATION.md** | Plan phase complete |
-| Implement the next task | **n8n-build** | `VALIDATION.md` approved |
-| Check JSON vs specs | **n8n-verify** | Build done for current task |
-| Fix after verify reject | **n8n-build** with findings | `[REJECT]` from verify |
+| Implement all pending tasks (build → verify → next) | **n8n-build** | `VALIDATION.md` approved — **default: autonomous loop**; no manual verify between tasks |
+| Check JSON vs specs only (no build) | **n8n-verify** | Optional; normally run inside **n8n-build** |
+| Fix after verify reject | **n8n-build** | Prior iteration `[REJECT]` |
+| One task only | **n8n-build** + say “task N only” or “stop after one task” | Same prerequisites |
 | Unblock after 4 rejects | **STRUCTURAL_REEVAL.md** + re-approve VALIDATION → **n8n-build** | Structural reeval written |
 | Lint workflow JSON only | **n8n-validate-json** | `workflows/<slug>.json` exists |
+| Fix or write `{{ }}` / `$json` / `$node` expressions | **n8n-expression-syntax** | Field references prior nodes or webhook body |
 | Deploy to n8n Cloud | **n8n-deploy** | Valid JSON + your confirmation |
 | List remote / audit | **n8n-inspect** | `n8n-cli` configured |
 | Git vs Cloud drift | **n8n-pull** | Remote workflow id |
@@ -26,9 +28,8 @@ Ask in chat using the skill name (e.g. “use **n8n-plan** to …”) or `@` the
 1. **n8n-plan** — describe the automation; review spec summary.
 2. (Optional) **refinar-specs** — one question at a time until crisp.
 3. Approve **`specs/<slug>/VALIDATION.md`**.
-4. **n8n-build** — one task; repeat until `TASKS.md` complete.
-5. **n8n-verify** after each task (or once at the end).
-6. **n8n-deploy** when ready — you own secrets and overwrite confirmation.
+4. **n8n-build** — runs tasks in order; after each task it verifies inline; continues on `[APPROVE]` until `TASKS.md` done or `[REJECT]`.
+5. **n8n-deploy** when ready — you own secrets and overwrite confirmation.
 
 ## What agents must not do without you
 

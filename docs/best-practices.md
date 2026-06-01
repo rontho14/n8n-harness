@@ -91,4 +91,6 @@ Reusable workflows get their own `specs/<slug>/` and `workflows/<slug>.json`. Pa
 ## Related docs
 
 - [conventions.md](conventions.md) — repo paths, JSON shape, credentials
+- [n8n-workflow-json.md](n8n-workflow-json.md) — workflow JSON and connection ports
+- [n8n-node-catalog.md](n8n-node-catalog.md) — node types and parameters
 - [validation-rubric.md](validation-rubric.md) — build-ready scorecard

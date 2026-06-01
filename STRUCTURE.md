@@ -7,7 +7,7 @@ This repository builds and maintains n8n workflows with **persistent specificati
 1. **Specs are source of truth** — `specs/<workflow-slug>/` holds TRUTH, ARCHITECTURE, INTEGRATION, and related files.
 2. **Skills read paths, not pasted specs** — agents open files from disk; they do not rely on chat history alone.
 3. **Plan → human approve → build → verify → handoff** — explicit stops at validation and deploy.
-4. **One task at a time** — `TASKS.md` drives surgical edits to `workflows/<slug>.json`.
+4. **One task per iteration** — `TASKS.md` drives surgical edits; **`n8n-build`** auto-verifies each task and continues to the next on `[APPROVE]` (no manual verify between tasks).
 5. **No subagents** — one agent; invoke `n8n-plan`, `refinar-specs`, `n8n-build`, or `n8n-verify` as separate skills.
 
 ## Specification documents
@@ -31,8 +31,8 @@ Canonical workflow JSON: `workflows/<slug>.json`.
 |-------|-----------------|--------|------------|
 | Plan | `n8n-plan` | Draft specs + `VALIDATION.md` open items | Approve `VALIDATION.md`; no workflow JSON |
 | Refine | `refinar-specs` | Updated spec files, one Q at a time | Answer each question |
-| Build | `n8n-build` | One task → `workflows/<slug>.json` + `CHANGELOG.md` | Only after `VALIDATION.md` approved |
-| Verify | `n8n-verify` | `[APPROVE]` or `[REJECT]` + findings | On reject, re-run build with feedback |
+| Build | `n8n-build` | Per task: edit JSON → validate → verify inline → next task or stop | Only after `VALIDATION.md` approved |
+| Verify | `n8n-verify` | `[APPROVE]` or `[REJECT]` + findings | Usually inside `n8n-build`; standalone optional |
 | Deploy (optional) | `n8n-deploy` (+ `n8n-cli` for syntax) | Remote workflow + `deployments/DEPLOYMENTS.md` | You confirm overwrite/activate |
 
 Build forbids: real credentials in git, prod API calls with secrets, auto-import to n8n.
@@ -102,6 +102,8 @@ sequenceDiagram
 
 ## Related docs
 
+- [docs/n8n-workflow-json.md](docs/n8n-workflow-json.md) — workflow JSON shape, connections, LangChain ports
+- [docs/n8n-node-catalog.md](docs/n8n-node-catalog.md) — curated node types and parameters
 - [docs/n8n-cloud-cli.md](docs/n8n-cloud-cli.md) — n8n Cloud API CLI commands
 - [docs/best-practices.md](docs/best-practices.md) — naming, global error workflow, reusable sub-workflows
 - [REMINDERS.md](REMINDERS.md) — deferred follow-ups

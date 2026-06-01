@@ -24,7 +24,7 @@ Read [STRUCTURE.md](../../STRUCTURE.md) for the full pipeline.
 - **Best practices** — follow `docs/best-practices.md` and `.cursor/rules/n8n-best-practices.mdc` (naming, error workflow, sub-workflows).
 - **Naming** — follow `docs/conventions.md` for repo paths; story-style node names per best practices.
 - **English** for skills, specs, and agent-facing docs in this repo.
-- **One task per build** — surgical edits per `TASKS.md` unless user explicitly batches.
+- **Build loop** — `n8n-build` implements one `TASKS.md` item per iteration, runs **n8n-verify** inline, then continues to the next task without a separate user invoke (unless user asked for a single task or verify returned `[REJECT]`).
 - **No subagents** for this pipeline.
 - **Verify output** — `n8n-verify` must emit exactly `[APPROVE]` or `[REJECT]` with numbered findings.
 
@@ -34,7 +34,9 @@ Read [STRUCTURE.md](../../STRUCTURE.md) for the full pipeline.
 |------|---------|
 | `specs/<slug>/` | TRUTH, ARCHITECTURE, INTEGRATION, DESIGN, TASKS, VALIDATION, CHANGELOG |
 | `specs/_templates/` | Section templates (copy into `specs/<slug>/`) |
-| `workflows/<slug>.json` | Canonical workflow JSON |
+| `workflows/<slug>.json` | Your workflow JSON (harness build only — no examples here) |
+| `docs/n8n-workflow-json.md` | Workflow JSON shape and connections |
+| `docs/n8n-node-catalog.md` | Curated node types and parameters |
 | `docs/n8n-cloud-cli.md` | Full `n8n-cli` command reference (Cloud) |
 | `docs/best-practices.md` | Naming, error workflow, reusable sub-workflows |
 | `docs/conventions.md` | Repo paths and JSON shape |
