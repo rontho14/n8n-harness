@@ -76,7 +76,7 @@ There is no “list folder children” operation. Pattern:
 
 1. **Item** → **Get All** / Get Many on the document library (e.g. `Documents`).
 2. Set **`simplify`: `false`** so `id`, `webUrl`, `@odata.etag`, and `fields.FileLeafRef` are available.
-3. **Filter** on `webUrl` **contains** folder path segment (e.g. `02 - Documentos Base`) and filename (e.g. regex `^doc_\d{2}\.pdf$` on `name` or `fields.FileLeafRef`).
+3. **Filter** or **If** on `webUrl` **contains** the **URL-encoded** folder segment (e.g. display name `02 - Documentos Base` → filter value `02%20-%20Documentos%20Base`). Paths also include `Shared%20Documents`. See [exemplos-patterns.md](exemplos-patterns.md#exo-1--list--filter-by-weburl--loop--download) and [rd-cloud-patterns.example.md](rd-cloud-patterns.example.md) (optional local `rd-cloud-patterns.md`, gitignored). `Exemplos.json` uses **If** with `contentType.name` + `webUrl`; specs may use **Filter** — equivalent.
 
 ```json
 "parameters": {
@@ -100,9 +100,11 @@ Use **Resource = File**, operation **download**. Pick `folder` + `file` locators
 "parameters": {
   "site": { "__rl": true, "value": "...", "mode": "list" },
   "folder": { "__rl": true, "value": "...", "mode": "list", "cachedResultName": "Imagens Não Analisadas" },
-  "file": { "__rl": true, "value": "={{ $json['@odata'].etag }}", "mode": "id" }
+  "file": { "__rl": true, "value": "={{ $json['@odata.etag'].replace(/\\\"/g, '').split(',')[0] }}", "mode": "id" }
 }
 ```
+
+`@odata.etag` is often `"<guid>,1"` — strip quotes, split on `,`, use index `0` as file id. Bracket notation `['@odata.etag']` is required.
 
 **Outputs:** `main` (binary + json metadata) → extract / code / agent.
 
@@ -120,6 +122,24 @@ Use **Resource = File**, operation **download**. Pick `folder` + `file` locators
 
 `fileContents` names the **binary property** on the item (often `data`).
 
+### Upload in a loop (dynamic file name)
+
+Reference the **exact** `splitInBatches` node name with `$('…')`:
+
+```json
+"fileName": "={{ decodeURIComponent($('Loop over base documents').item.json.webUrl.split('/').pop()) }}"
+```
+
+Example If filter (folder in `webUrl`):
+
+```json
+{
+  "leftValue": "={{ $json.webUrl }}",
+  "rightValue": "02%20-%20Documentos%20Base",
+  "operator": { "type": "string", "operation": "contains" }
+}
+```
+
 ---
 
 ## Files and binary
@@ -129,10 +149,18 @@ Use **Resource = File**, operation **download**. Pick `folder` + `file` locators
 | | |
 |--|--|
 | **type** | `n8n-nodes-base.extractFromFile` |
-| **typeVersion** | `1` |
-| **parameters** | `operation`: `csv`, `xlsx`, etc. |
-| **Inputs** | `main` with binary from download |
-| **Outputs** | `main` → convert / vector / set |
+| **typeVersion** | `1.1` (PDF); `1` for csv/xlsx |
+| **parameters** | `operation`: `pdf`, `csv`, `xlsx`, … |
+| **Inputs** | `main` with binary from SharePoint/other download |
+| **Outputs** | `main` with extracted text on `json` |
+
+**PDF text (exo-4):** After SharePoint File download, set `operation` to **`pdf`**. No external “PDF read” HTTP API — see [exemplos-patterns.md](exemplos-patterns.md#exo-4--extract-pdf-text-built-in-no-read-api) and `Exemplos.json` node `Extract from File - Doc_x1`.
+
+```json
+"parameters": { "operation": "pdf", "options": {} }
+```
+
+Pair with **Code** for deterministic label→field parsing. MCP lookup may miss this type; still use `n8n-nodes-base.extractFromFile` in ARCHITECTURE.
 
 ### Convert to File
 
@@ -404,6 +432,23 @@ Entry point must be documented (manual trigger or schedule) — ingest subgraph 
 3. Done: `convertToFile` (xlsx) → SharePoint upload
 
 Consider splitting into orchestrator + reusable child workflows per [best-practices.md](best-practices.md).
+
+### D. SharePoint batch download / upload
+
+1. **Item** → Get All on `Documents`, `simplify: false`
+2. **If** — `contentType.name` = `Document` AND `webUrl` contains encoded folder segment
+3. **splitInBatches** → loop branch: **File** download — static **Parent Folder** + dynamic **File** id from `@odata.etag` → process
+4. Optional done branch or second loop: **File** upload with dynamic `fileName` from `webUrl`
+
+Expressions: [n8n-expression-syntax EXAMPLES ex16–ex18](../.cursor/skills/n8n-expression-syntax/EXAMPLES.md).
+
+### E. HTML → PDF via HTTP API
+
+1. Agent or Set (HTML/text) → **convertToFile** (`operation`: `html`)
+2. **httpRequest** POST, `contentType`: `multipart-form-data`, binary field mapped to PDF service
+3. Document API base URL and auth in `INTEGRATION.md` only (no secrets in git)
+
+Pair with **extractFromFile** (`pdf`) when ingesting existing SharePoint PDFs.
 
 ---
 

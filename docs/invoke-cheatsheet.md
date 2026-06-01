@@ -6,16 +6,18 @@ Ask in chat using the skill name (e.g. “use **n8n-plan** to …”) or `@` the
 
 | You want to… | Skill | Prerequisites |
 |--------------|-------|----------------|
-| Start a new workflow from an idea | **n8n-plan** | Narrative or ticket text |
-| Clarify ambiguous requirements | **refinar-specs** | `specs/<slug>/` exists |
+| Start a new workflow from an idea | **n8n-plan** | Narrative or ticket text; **MCP required** — [mcp-pipeline.md](mcp-pipeline.md) |
+| Clarify ambiguous requirements | **refinar-specs** | `specs/<slug>/` exists; MCP when node/integration choices change |
 | Approve specs for implementation | *(you)* edit **VALIDATION.md** | Plan phase complete |
-| Implement all pending tasks (build → verify → next) | **n8n-build** | `VALIDATION.md` approved — **default: autonomous loop**; no manual verify between tasks |
-| Check JSON vs specs only (no build) | **n8n-verify** | Optional; normally run inside **n8n-build** |
+| Implement all pending tasks (build → verify → next) | **n8n-build** | `VALIDATION.md` approved; **MCP required** per task — [mcp-pipeline.md](mcp-pipeline.md) |
+| Check JSON vs specs only (no build) | **n8n-verify** | Optional; normally inside **n8n-build**; MCP `validate_workflow` required |
 | Fix after verify reject | **n8n-build** | Prior iteration `[REJECT]` |
 | One task only | **n8n-build** + say “task N only” or “stop after one task” | Same prerequisites |
 | Unblock after 4 rejects | **STRUCTURAL_REEVAL.md** + re-approve VALIDATION → **n8n-build** | Structural reeval written |
 | Lint workflow JSON only | **n8n-validate-json** | `workflows/<slug>.json` exists |
-| Fix or write `{{ }}` / `$json` / `$node` expressions | **n8n-expression-syntax** | Field references prior nodes or webhook body |
+| MCP tool usage (plan/build/verify) | **n8n-mcp-local** | Read skill before calls; `mcp:build` + reload if down — [mcp-pipeline.md](mcp-pipeline.md) |
+| Fix MCP server / vendor tree | **n8n-mcp-maintain** | Edits under `mcp/` |
+| Fix or write `{{ }}` / `$json` / `$node` expressions | **n8n-expression-syntax** | [exemplos-patterns.md](exemplos-patterns.md) exo-1…exo-5; EXAMPLES ex16–ex23; optional `Exemplos.json` / `rd-cloud-patterns.md` |
 | Deploy to n8n Cloud | **n8n-deploy** | Valid JSON + your confirmation |
 | List remote / audit | **n8n-inspect** | `n8n-cli` configured |
 | Git vs Cloud drift | **n8n-pull** | Remote workflow id |
@@ -44,6 +46,16 @@ Ask in chat using the skill name (e.g. “use **n8n-plan** to …”) or `@` the
 ```bash
 node scripts/validate-workflow.mjs workflows/<slug>.json
 n8n-cli workflow list
+npm run mcp:install   # first-time MCP deps (from repo root)
+npm run mcp:build     # compile mcp/dist after mcp/ changes
 ```
+
+MCP operator details: [mcp-local.md](mcp-local.md). Pipeline integration: [mcp-pipeline.md](mcp-pipeline.md).
+
+## What MCP must not replace
+
+- **n8n-verify** — spec/graph/secrets gate after each build task
+- **n8n-deploy** — Cloud push with your confirmation
+- **VALIDATION.md** — human approval before build
 
 See [STRUCTURE.md](../STRUCTURE.md) for the pipeline diagram.

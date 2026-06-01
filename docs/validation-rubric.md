@@ -14,9 +14,11 @@ Standards: [best-practices.md](best-practices.md).
 | 4 | **Error workflow** | ARCHITECTURE | Global `errorWorkflow` name/id **or** local Error Trigger with documented exception |
 | 5 | **Workflow kind** | ARCHITECTURE | `orchestrator` or `reusable`; sub-workflows listed with strict I/O if any |
 | 6 | **Naming (story)** | ARCHITECTURE | Planned node names are plain English (no bare `If` / `Set` / `HTTP Request`) |
+| 6b | **Node types verified** | ARCHITECTURE | Each planned node has **Type (verified)** from MCP `get_node` during plan (`n8n-plan` step 2d); not guessed |
+| 6c | **RD exemplos patterns** (when SharePoint/PDF) | ARCHITECTURE, INTEGRATION | Plan followed [exemplos-patterns.md](exemplos-patterns.md) (exo-1…exo-5); no external API for **reading** PDF; `webUrl` filter uses encoded folder segment; HTML→PDF URL/credential names only in INTEGRATION |
 | 7 | Input / output | ARCHITECTURE, INTEGRATION | Inbound/outbound shapes with examples; sub-workflow contracts if used |
 | 8 | Credentials | INTEGRATION | **Names** only; step-by-step human setup in n8n UI |
-| 9 | Environments | INTEGRATION | dev vs prod base URLs; no prod secrets in git |
+| 9 | n8n Cloud instance | INTEGRATION | Instance URL, project, webhook base (if any); external API base URLs; no secrets in git |
 | 10 | Acceptance → tests | TRUTH | Given/When/Then table maps to numbered manual test steps |
 | 11 | Non-goals | TRUTH | Explicit out-of-scope list |
 | 12 | **Reusable governance** | ARCHITECTURE (if reusable) | Limited scope; note shared visibility / restricted write |

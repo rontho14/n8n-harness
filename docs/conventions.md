@@ -1,6 +1,6 @@
 # n8n workflow conventions (this repo)
 
-Repo layout and JSON mechanics. **n8n Cloud** remote ops: **[n8n-cloud-cli.md](n8n-cloud-cli.md)**. Team standards: **[best-practices.md](best-practices.md)**. JSON reference: **[n8n-workflow-json.md](n8n-workflow-json.md)**, node catalog: **[n8n-node-catalog.md](n8n-node-catalog.md)**. Deferred: **[REMINDERS.md](../REMINDERS.md)**.
+Repo layout and JSON mechanics. **n8n Cloud** remote ops: **[n8n-cloud-cli.md](n8n-cloud-cli.md)**. Team standards: **[best-practices.md](best-practices.md)**. JSON reference: **[n8n-workflow-json.md](n8n-workflow-json.md)**, node catalog: **[n8n-node-catalog.md](n8n-node-catalog.md)**. RD SharePoint/PDF: **[exemplos-patterns.md](exemplos-patterns.md)** + optional **`Exemplos.json`** (root, gitignored); team overrides: copy **[rd-cloud-patterns.example.md](rd-cloud-patterns.example.md)** → `rd-cloud-patterns.md` (gitignored). Deferred: **[REMINDERS.md](../REMINDERS.md)**.
 
 ## File naming
 
@@ -9,7 +9,7 @@ Repo layout and JSON mechanics. **n8n Cloud** remote ops: **[n8n-cloud-cli.md](n
 | Spec folder | `specs/<kebab-slug>/` | `specs/resolve-user-by-email/` |
 | Workflow JSON | `workflows/<kebab-slug>.json` | `workflows/resolve-user-by-email.json` |
 | Workflow `name` field | Short plain English (see best practices) | `Resolve user profile by email` |
-| Reference export (optional) | Outside `workflows/` (e.g. repo root) | UI export for adopt/study — not canonical until built into `workflows/` |
+| Reference export (optional) | Outside `workflows/` (e.g. repo root) | `Exemplos.json` — pattern library; see [exemplos-patterns.md](exemplos-patterns.md); not canonical until built into `workflows/` |
 
 `<slug>` must be identical across spec folder and workflow file.
 
