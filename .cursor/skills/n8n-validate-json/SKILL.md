@@ -30,7 +30,7 @@ For full review use **`n8n-verify`**. For Cloud deploy use **`n8n-deploy`**.
    ```bash
    node scripts/validate-workflow.mjs --fix workflows/<slug>.json
    ```
-4. Optional cross-check: [workflow-json.md](../n8n-cli/workflow-json.md) (naming, `errorWorkflow` in settings).
+4. Optional cross-check: [docs/n8n-workflow-json.md](../../../docs/n8n-workflow-json.md) (naming, ports, `errorWorkflow`).
 5. Report pass/fail and whether the file is ready for **deploy planning** (not “ready for production”).
 
 Do not deploy. Do not call `n8n-cli` unless user separately asks for Cloud checks (**n8n-inspect** / **n8n-verify**).

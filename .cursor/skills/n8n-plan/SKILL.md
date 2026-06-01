@@ -20,7 +20,7 @@ User invokes **`n8n-plan`** or asks to plan/spec a new or changed workflow befor
 ## Inputs to gather
 
 1. User narrative (trigger, systems, success/failure expectations).
-2. `docs/best-practices.md`, `docs/conventions.md`, `docs/validation-rubric.md`, `docs/n8n-cloud-cli.md`.
+2. `docs/best-practices.md`, `docs/conventions.md`, `docs/validation-rubric.md`, `docs/n8n-cloud-cli.md`, `docs/n8n-workflow-json.md`, `docs/n8n-node-catalog.md`.
 3. Existing `workflows/` and sibling `specs/*/` for patterns and naming collisions.
 4. Optional `docs/` or README constraints.
 

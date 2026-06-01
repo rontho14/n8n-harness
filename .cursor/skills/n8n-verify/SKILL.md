@@ -15,19 +15,22 @@ Strict reviewer for workflow JSON against on-disk specs. Read-only toward n8n re
 ## Prerequisites
 
 - Build completed for the current task or full workflow.
+- Often invoked **inline by n8n-build** after each task — same checklist; user does not need a separate chat turn.
 - Read `specs/<slug>/` specs and `workflows/<slug>.json`.
+- For JSON/port semantics: `docs/n8n-workflow-json.md`, `docs/n8n-node-catalog.md`.
 
 ## Checks
 
 1. **JSON** — run `node scripts/validate-workflow.mjs workflows/<slug>.json` (report failures).
 2. **Graph** — nodes and connections match `ARCHITECTURE.md` (order, branches).
 3. **Story naming** — `[REJECT]` if any node name is generic (`If`, `Set`, `Switch`, `HTTP Request`, `Code`, `Webhook` alone). Names should read as plain English per `docs/best-practices.md`.
-4. **Error handling** — `settings.errorWorkflow` matches ARCHITECTURE **or** local Error Trigger present only with documented `local-exceptional` justification. `[REJECT]` if neither.
+4. **Error handling** — JSON must match ARCHITECTURE: (a) `settings.errorWorkflow` set to documented global handler, **or** (b) local Error Trigger with `local-exceptional` justification, **or** (c) **`none (exceptional)`** documented in ARCHITECTURE with neither handler nor Error Trigger. `[REJECT]` only if JSON contradicts the spec (e.g. missing required global handler, or handlers present when spec says none).
 5. **Sub-workflows** — each Execute Workflow node matches ARCHITECTURE table (child workflow, inputs/outputs). Reusable workflows: I/O contract complete in specs.
 6. **Integration** — HTTP/Slack/webhook nodes use URLs, methods, and credential **names** from `INTEGRATION.md`.
 7. **Secrets** — no literal tokens/keys/passwords; credential refs by name/id only.
 8. **Acceptance** — map TRUTH Given/When/Then rows to **Manual test steps** (numbered); flag gaps.
 9. **DESIGN** — if present, message copy matches DESIGN (labels only; no deploy test).
+10. **Expressions** — `[REJECT]` on obvious syntax issues: missing `{{ }}` in dynamic fields, webhook fields at `$json` root instead of `.body` when INTEGRATION documents webhook body, `$node["..."]` names that do not match workflow JSON, or `{{ }}` inside Code node `jsCode`. See `.cursor/skills/n8n-expression-syntax/COMMON_MISTAKES.md`.
 
 ### Optional Cloud checks (read-only, when user may deploy soon)
 
@@ -78,9 +81,13 @@ Then:
    - Uncheck **Approval** in `VALIDATION.md` and add open item: structural reeval required
    - Tell user: revise specs, re-approve VALIDATION, then `n8n-build` — do not loop build blindly
 
+## Task-scoped verify
+
+When **`n8n-build`** runs autonomously, judge **only the current task’s** success criteria in `TASKS.md` plus global blockers (secrets, JSON validity, story naming, error-handling mode, graph nodes for this task must exist). Do not `[REJECT]` optional/future tasks not yet built.
+
 ## Forbidden
 
-- Fixing JSON in this skill (user runs **`n8n-build`** with findings).
+- Fixing JSON in this skill ( **`n8n-build`** fixes after `[REJECT]`).
 - Deploying or activating workflows.
 - `[APPROVE]` with outstanding spec contradictions or failing validate script.
 

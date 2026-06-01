@@ -45,7 +45,7 @@ n8n-cli workflow update <id> --file=workflows/<slug>.json
 
 ## Workflow JSON in repo
 
-Shape and lint: [workflow-json.md](workflow-json.md)
+Shape and lint: [docs/n8n-workflow-json.md](../../../docs/n8n-workflow-json.md) · Nodes: [docs/n8n-node-catalog.md](../../../docs/n8n-node-catalog.md)
 
 Pipeline: [STRUCTURE.md](../../../STRUCTURE.md)
 
