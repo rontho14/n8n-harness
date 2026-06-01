@@ -9,6 +9,7 @@ This repository builds and maintains n8n workflows with **persistent specificati
 3. **Plan → human approve → build → verify → handoff** — explicit stops at validation and deploy.
 4. **One task per iteration** — `TASKS.md` drives surgical edits; **`n8n-build`** auto-verifies each task and continues to the next on `[APPROVE]` (no manual verify between tasks).
 5. **No subagents** — one agent; invoke `n8n-plan`, `refinar-specs`, `n8n-build`, or `n8n-verify` as separate skills.
+6. **Required MCP lane** — when available, agents call vendored `n8n-harness-mcp` during plan, refine (node changes), build, and verify for discovery and validation; specs and `n8n-verify` remain authoritative ([docs/mcp-pipeline.md](docs/mcp-pipeline.md)).
 
 ## Specification documents
 
@@ -45,13 +46,19 @@ Verify on 4th consecutive `[REJECT]` for the same task: set `BLOCKED_STRUCTURAL`
 specs/<slug>/          # Spec set (source of truth)
 specs/_templates/      # Section templates (copy into specs/<slug>/)
 workflows/<slug>.json  # Canonical workflow JSON
-docs/                  # conventions.md, validation-rubric.md
+docs/                  # exemplos-patterns.md, conventions, node-catalog, rd-cloud-patterns.example, mcp-pipeline
 scripts/               # validate-workflow.mjs
 deployments/           # DEPLOYMENTS.md (deploy log)
+package.json           # mcp:install, mcp:build (repo root)
+mcp/                   # Vendored local MCP server (stdio, node docs DB)
+plan/                  # MCP fork implementation phases (maintainer-local, gitignored)
 .cursor/
-  skills/              # n8n-plan, refinar-specs, n8n-build, n8n-verify, n8n-deploy, …
-  rules/               # Always-on blocking rules
+  mcp.json             # Cursor stdio config for n8n-harness-mcp
+  skills/              # n8n-plan, refinar-specs, n8n-build, n8n-verify, n8n-deploy, n8n-mcp-local, …
+  rules/               # Always-on blocking rules (n8n-harness, n8n-mcp)
 ```
+
+**Local MCP** is required in the pipeline when available (node discovery, `validate_node` / `validate_workflow`). Specs, `n8n-verify`, and `n8n-deploy` remain authoritative. [docs/mcp-pipeline.md](docs/mcp-pipeline.md) · [docs/mcp-local.md](docs/mcp-local.md).
 
 ## Diagram
 
@@ -59,6 +66,7 @@ deployments/           # DEPLOYMENTS.md (deploy log)
 sequenceDiagram
     actor User
     participant Plan as n8n-plan
+    participant MCP as n8n-harness-mcp
     participant Specs as specs/slug/
     participant Refine as refinar-specs
     participant Build as n8n-build
@@ -67,23 +75,27 @@ sequenceDiagram
 
     Note over User,Specs: Phase 1 — Plan
     User->>Plan: Narrative / change request
+    Plan->>MCP: search_nodes, get_node per node family
     Plan->>Specs: TRUTH, ARCHITECTURE, INTEGRATION, DESIGN, VALIDATION
     Plan->>User: Summary + open items
     User->>Specs: Sets VALIDATION.md approved
 
     opt Optional refinement
         User->>Refine: Challenge plan
+        Refine->>MCP: get_node when node choice changes
         Refine->>Specs: Updates specs one decision at a time
     end
 
     Note over User,Build: Phase 2 — Build (one task)
     User->>Build: After VALIDATION approved
     Build->>Specs: Read paths; ensure TASKS.md
+    Build->>MCP: get_node, validate_node, validate_workflow
     Build->>Build: Edit workflows/slug.json
     Build->>Specs: CHANGELOG.md append
 
     Note over User,Verify: Phase 3 — Verify
     User->>Verify: Task or full workflow
+    Verify->>MCP: validate_workflow findings
     Verify->>Verify: JSON, graph, integration, secrets scan
     alt APPROVE
         Verify->>User: [APPROVE]
@@ -110,3 +122,6 @@ sequenceDiagram
 - [docs/conventions.md](docs/conventions.md) — repo paths and JSON shape
 - [docs/validation-rubric.md](docs/validation-rubric.md) — build-ready checklist
 - [docs/invoke-cheatsheet.md](docs/invoke-cheatsheet.md) — which skill when
+- [docs/mcp-pipeline.md](docs/mcp-pipeline.md) — required MCP calls per pipeline phase
+- [docs/mcp-local.md](docs/mcp-local.md) — vendored MCP install, build, env, disabled tools
+- [mcp/docs/ARCHITECTURE.md](mcp/docs/ARCHITECTURE.md) — MCP server architecture and improvement guide (maintainers)
