@@ -20,6 +20,11 @@ mcp/data/*.db.backup
 
 REMINDERS.md
 
+# Workflow specs are local (copy from specs/_templates/); templates stay in git
+specs/**
+!specs/_templates/
+!specs/_templates/**
+
 /*.json
 !package.json
 plan/
