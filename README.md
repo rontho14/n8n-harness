@@ -120,3 +120,7 @@ Optional reference exports from n8n UI may live **outside** `workflows/` (not ca
 - `VALIDATION.md` approval required before build.
 - Confirm before overwriting an existing remote workflow.
 - Do not commit `.env` or credential payload files.
+
+## Acknowledgments
+
+This repository uses a vendored fork of the excellent [n8n node documentation MCP server](https://github.com/czlonkowski/n8n-mcp), originally created by **Romuald Czlonkowski** ([aiadvisors.pl](https://www.aiadvisors.pl/en)). We are immensely grateful to him for his work on the original MCP server which serves as the foundation for our `n8n-harness-mcp`.
